@@ -39,11 +39,13 @@
     <br/>
     <br/>
 
-    <label th:for="${user.enabled}" th:text="enabled">enabled</label>
-    <input type="checkbox" th:text="${user.enabled}" th:value="${user.enabled}" th:field="*{enabled}"/>
+    <p>
+        <label> enabled:
+            <input type="checkbox" th:field="*{enabled}"/>
+            <!--            <input type="checkbox" th:text="${user.enabled}"  th:field="*{enabled}"/>-->
+        </label>
+    </p>
     <br/>
-    <br/>
-
     <p>
         <label>Roles:
             <input type="checkbox" name="roles"
@@ -54,7 +56,6 @@
             />
         </label>
     </p>
-    <br/>
     <br/>
 
     <input type="submit" value="сохранить"/>

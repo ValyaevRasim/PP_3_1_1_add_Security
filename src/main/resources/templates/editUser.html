@@ -42,12 +42,13 @@
         <input name="text" th:field="*{password}" id="password" type="text"/>
         <br/>
         <br/>
-
-        <label th:for="${user.enabled}" th:text="enabled">enabled</label>
-        <input type="checkbox" th:text="${user.enabled}" th:value="${user.enabled}" th:field="*{enabled}"/>
+        <p>
+            <label> enabled:
+                <!--                <input type="checkbox" th:text="${user.enabled}"  th:field="*{enabled}"/>-->
+                <input type="checkbox" th:field="*{enabled}"/>
+            </label>
+        </p>
         <br/>
-        <br/>
-
         <p>
             <label>Roles:
                 <input type="checkbox" name="roles"

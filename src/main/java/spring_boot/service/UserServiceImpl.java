@@ -13,6 +13,7 @@ import java.util.List;
 
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserDetailsService {
 
     @Autowired
@@ -21,6 +22,14 @@ public class UserServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
+//        if(user != null && user.isEnabled()) {//here you can check that
+//            List<GrantedAuthority> authorities = getUserAuthority(user.getRoles());
+//            return buildUserForAuthentication(user, authorities);
+//        }
+//
+//        else {
+//            throw new UsernameNotFoundException("username not found");
+//        }
 
         if (user == null) {
             throw new UsernameNotFoundException("User not found");

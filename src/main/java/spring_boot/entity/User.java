@@ -1,33 +1,40 @@
 package spring_boot.entity;
 
+import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Data
-@Table(name="user")
+@Table(name = "user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotNull
+    @NotEmpty
     @Setter
-    @Column(name = "username",unique = true, nullable = false)
+    @Column(name = "username", unique = true, nullable = false)
     private String username;
 
     @Column(name = "firstname")
     private String firstname;
 
     @Setter
+    @NotNull
+    @NotEmpty
     @Column(name = "password")
     private String password;
 
@@ -45,8 +52,9 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-//    @Column(name = "isEnabled",nullable = false)
-//    private boolean isEnabled;
+    @Getter @Setter
+    @Column(name = "enabled",nullable = false)
+    private boolean enabled;
 
     public User() {
     }
@@ -59,14 +67,14 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-//    public User(String firstname, String lastname, String username, int age, String password, Boolean isEnabled) {
-//        this.username = username;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.age = age;
-//        this.password = password;
-//        this.isEnabled = isEnabled;
-//    }
+    public User(String firstname, String lastname, String username, int age, String password, Boolean enabled) {
+        this.username = username;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.age = age;
+        this.password = password;
+        this.enabled = enabled;
+    }
 
     public Long getId() {
         return id;
@@ -140,9 +148,13 @@ public class User implements UserDetails {
         return true;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
     }
 
     public void setUsername(String username) {
@@ -153,7 +165,4 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-//    public void setEnabled(boolean enabled) {
-//        this.enabled = enabled;
-//    }
 }
