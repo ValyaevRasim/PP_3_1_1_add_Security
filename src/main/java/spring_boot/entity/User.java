@@ -1,6 +1,7 @@
 package spring_boot.entity;
 
 import com.sun.istack.NotNull;
+import lombok.Data;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Data
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +35,11 @@ public class User implements UserDetails {
     private int age;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-//    @JoinTable(
-//            name = "users_roles",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "role_id")
-//    )
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private final Set<Role> roles = new HashSet<>();
 
     private boolean enabled;
@@ -122,5 +124,68 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return this.enabled;
     }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (getAge() != user.getAge()) return false;
+        if (isEnabled() != user.isEnabled()) return false;
+        if (!getId().equals(user.getId())) return false;
+        if (!getUsername().equals(user.getUsername())) return false;
+        if (!getFirstname().equals(user.getFirstname())) return false;
+        if (!getLastname().equals(user.getLastname())) return false;
+        if (!getPassword().equals(user.getPassword())) return false;
+        return getRoles().equals(user.getRoles());
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getId().hashCode();
+        result = 31 * result + getUsername().hashCode();
+        result = 31 * result + getFirstname().hashCode();
+        result = 31 * result + getLastname().hashCode();
+        result = 31 * result + getPassword().hashCode();
+        result = 31 * result + getAge();
+        result = 31 * result + getRoles().hashCode();
+        result = 31 * result + (isEnabled() ? 1 : 0);
+        return result;
+    }
+
 
 }

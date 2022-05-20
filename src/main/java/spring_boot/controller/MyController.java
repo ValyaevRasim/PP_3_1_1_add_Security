@@ -1,13 +1,11 @@
 package spring_boot.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import spring_boot.entity.Role;
 import spring_boot.entity.User;
-import spring_boot.repository.RoleRepository;
 import spring_boot.service.RoleService;
 import spring_boot.service.UserServiceImpl;
 
@@ -58,7 +56,7 @@ public class MyController {
     public String updateUser(@PathVariable("id") long id, Model model){
         System.out.println("updateUser/updateUser");
         User user = userServiceImpl.getUserById(id);
-        List<Role> roles = (List<Role>) roleService.listRoles();
+        List<Role> roles = roleService.listRoles();
         model.addAttribute("user", user);
         model.addAttribute("allRoles",roles);
         return "editUser";
@@ -67,6 +65,7 @@ public class MyController {
     @RequestMapping("/{id}")
     public String edit(@ModelAttribute("user") User user) {
         System.out.println("edit");
+        System.out.println(user.getRoles());
         userServiceImpl.saveUser(user);
         return "redirect:/";
     }

@@ -28,7 +28,6 @@
     </tr>
     <th:block th:each="msg,state : ${userList}">
         <tr>
-
             <td th:utext="${state.index+1}">index</td>
             <td th:utext="${msg.getId()}">index</td>
             <td th:utext="${msg.getUsername()}">index</td>
@@ -48,8 +47,6 @@
                     <input type="submit" class="buttonDelete" value="удалить"/>
                 </form>
             </td>
-<!--            <td><input type="checkbox" th:field="${msg.isEnabled}"/>index</td>-->
-<!--            <td><input type="checkbox" th:field="${msg.enabled}" th:value="${msg.isEnabled}"/></td>-->
 
         </tr>
     </th:block>
