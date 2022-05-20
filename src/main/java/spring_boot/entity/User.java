@@ -1,9 +1,6 @@
 package spring_boot.entity;
 
 import com.sun.istack.NotNull;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,45 +12,34 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Data
-@Table(name = "user")
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
     private Long id;
 
     @NotNull
     @NotEmpty
-    @Setter
-    @Column(name = "username", unique = true, nullable = false)
+    @Column(unique = true)
     private String username;
 
-    @Column(name = "firstname")
     private String firstname;
+    private String lastname;
 
     @Setter
     @NotNull
     @NotEmpty
-    @Column(name = "password")
     private String password;
 
-    @Column(name = "lastname")
-    private String lastname;
-
-    @Column(name = "age")
     private int age;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private Set<Role> roles = new HashSet<>();
+//    @JoinTable(
+//            name = "users_roles",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id")
+//    )
+    private final Set<Role> roles = new HashSet<>();
 
-    @Getter @Setter
-    @Column(name = "enabled",nullable = false)
     private boolean enabled;
 
     public User() {
@@ -80,32 +66,16 @@ public class User implements UserDetails {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getFirstname() {
         return firstname;
-    }
-
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
     }
 
     public String getLastname() {
         return lastname;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
-    }
-
     public int getAge() {
         return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
     }
 
     @Override
@@ -148,21 +118,9 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
     @Override
     public boolean isEnabled() {
         return this.enabled;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
 }
