@@ -11,10 +11,10 @@
 </form>
 <br/>
 <br/>
-<h3>СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ</h3>
+<h3>СОЗДАНИЕ РОЛИ</h3>
 <form th:method="POST" th:action="@{/admin/saveRole}" th:object="${role}">
 
-    <label for="role">role</label>
+    <label for="role">role name</label>
     <input name="text" th:field="*{name}" id="role" type="text"/>
     <br/>
     <br/>

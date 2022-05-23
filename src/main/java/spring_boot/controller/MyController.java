@@ -1,15 +1,18 @@
 package spring_boot.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import spring_boot.entity.Role;
 import spring_boot.entity.User;
-import spring_boot.repository.RoleRepository;
-import spring_boot.service.RoleService;
-import spring_boot.service.UserServiceImpl;
+import spring_boot.service.RoleServiceImpl;
+import spring_boot.service.SecurityService;
+import spring_boot.service.UserDetailServiceImpl;
+import spring_boot.service.UserService;
+import spring_boot.validator.UserValidator;
 
 import java.util.List;
 
@@ -17,21 +20,71 @@ import java.util.List;
 @RequestMapping("/")
 public class MyController {
 
-    private final UserServiceImpl userServiceImpl;
-    private final RoleService roleService;
+    private final UserDetailServiceImpl userDetailServiceImpl;
+    private final RoleServiceImpl roleServiceImpl;
 
     @Autowired
-    public MyController(UserServiceImpl userServiceImpl, RoleService roleService) {
-        this.userServiceImpl = userServiceImpl;
-        this.roleService = roleService;
+    private UserService userService;
+
+    @Autowired
+    private SecurityService securityService;
+
+    @Autowired
+    private UserValidator userValidator;
+
+//    @Autowired
+//    private JdbcUserDetailsManager jdbcUserDetailsManager;
+
+    @Autowired
+    public MyController(UserDetailServiceImpl userDetailServiceImpl, RoleServiceImpl roleServiceImpl) {
+        this.userDetailServiceImpl = userDetailServiceImpl;
+        this.roleServiceImpl = roleServiceImpl;
     }
 
+//
+//    @GetMapping("/registration")
+//    public String registration(Model model) {
+//        model.addAttribute("userForm", new User());
+//        return "registration";
+//    }
+//
+//    @PostMapping("/registration")
+//    public String registration(@ModelAttribute("userForm") User user, BindingResult bindingResult, Model model) {
+//        userValidator.validate(user, bindingResult);
+//        if (bindingResult.hasErrors()) {
+//            return "registration";
+//        }
+//        userService.saveUser(user);
+//        securityService.autoLogin(user.getUsername(), user.getPasswordConfirm());
+//        return "redirect:/welcome";
+//    }
+//
+//    @GetMapping("/login")
+//    public String login(Model model, String error, String logout) {
+//        if (error != null) {
+//            model.addAttribute("error", "Username or password is incorrect");
+//        }
+//        if (logout != null) {
+//            model.addAttribute("message", "Logged out successfully");
+//        }
+//        return "login";
+//    }
+//
+//    @GetMapping({"/", "/welcome"})
+//    public String welcome(Model model) {
+//        return "welcome";
+//    }
+//
+//    @GetMapping("/admin")
+//    public String admin(Model model) {
+//        return "admin";
+//    }
 
     // начальная страница
     @RequestMapping("/")
     public String showAllUsers(Model model) {
         System.out.println("showAllUsers/allUsers");
-        List<User> allUsers = userServiceImpl.getAllUsers();
+        List<User> allUsers = userDetailServiceImpl.getAllUsers();
         model.addAttribute("userList", allUsers);
         return "allUsers";
     }
@@ -40,42 +93,42 @@ public class MyController {
     @RequestMapping("/admin/addUser")
     public String addNewUser(Model model) {
         System.out.println("addUser/new");
-        List<Role> roles = roleService.listRoles();
+        List<Role> roles = roleServiceImpl.getAllRoles();
         model.addAttribute("user", new User());
-        model.addAttribute("allRoles",roles);
+        model.addAttribute("allRoles", roles);
         return "newUser";
     }
 
     @PostMapping("/admin/saveUser")
     public String createNewUser(@ModelAttribute("user") User user) {
         System.out.println("createNewUser");
-        userServiceImpl.saveUser(user);
+        userDetailServiceImpl.saveUser(user);
         return "redirect:/";
     }
 
     //    обновление данных пользователя, используем 2 метода
     @GetMapping("/admin/updateUser/{id}")
-    public String updateUser(@PathVariable("id") long id, Model model){
+    public String updateUser(@PathVariable("id") long id, Model model) {
         System.out.println("updateUser/updateUser");
-        User user = userServiceImpl.getUserById(id);
-        List<Role> roles = (List<Role>) roleService.listRoles();
+        User user = userDetailServiceImpl.getUserById(id);
+        List<Role> roles = (List<Role>) roleServiceImpl.getAllRoles();
         model.addAttribute("user", user);
-        model.addAttribute("allRoles",roles);
+        model.addAttribute("allRoles", roles);
         return "editUser";
     }
 
     @RequestMapping("/{id}")
     public String edit(@ModelAttribute("user") User user) {
         System.out.println("edit");
-        userServiceImpl.saveUser(user);
+        userDetailServiceImpl.saveUser(user);
         return "redirect:/";
     }
 
     //    удаление пользователя, используем 2 метода
     @GetMapping("/admin/deleteUser/{id}")
-    public String deleteUser(@PathVariable("id") long id){
+    public String deleteUser(@PathVariable("id") long id) {
         System.out.println("deleteUser/deleteUser");
-        userServiceImpl.deleteUserById(id);
+        userDetailServiceImpl.deleteUserById(id);
         return "redirect:/";
     }
 
@@ -88,12 +141,12 @@ public class MyController {
         return "newRole";
     }
 
-//    @PostMapping()
+    //    @PostMapping()
 //    @RequestMapping(value = "/addRole", method = RequestMethod.POST)
     @PostMapping("/admin/saveRole")
     public String saveRole(@ModelAttribute("role") Role role) {
         System.out.println("createNewRole");
-        roleService.saveRole(role);
+        roleServiceImpl.saveRole(role);
         return "redirect:/";
     }
 

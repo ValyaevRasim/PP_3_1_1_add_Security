@@ -3,16 +3,16 @@ package spring_boot.entity;
 import com.sun.istack.NotNull;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -23,26 +23,29 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotNull
     @NotEmpty
-    @Setter
     @Column(name = "username", unique = true, nullable = false)
     private String username;
 
+    @NotEmpty
+    @Column(nullable = false)
+    private String password;
+
+    @Transient
+    @NotEmpty
+    @Column(nullable = false)
+    private String passwordConfirm; //подтверждение пароля
+
     @Column(name = "firstname")
     private String firstname;
-
-    @Setter
-    @NotNull
-    @NotEmpty
-    @Column(name = "password")
-    private String password;
 
     @Column(name = "lastname")
     private String lastname;
 
     @Column(name = "age")
     private int age;
+
+    private boolean active;
 
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(
@@ -52,13 +55,18 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @Getter @Setter
-    @Column(name = "enabled",nullable = false)
+
+    @Value("true")
+    @Column(name = "enabled")
     private boolean enabled;
 
-    public User() {
-    }
+    public User(){}
 
+public User(String username, String password, boolean active) {
+    this.username = username;
+    this.password = password;
+    this.active = active;
+}
     public User(String firstname, String lastname, String username, int age, String password) {
         this.username = username;
         this.firstname = firstname;
@@ -120,7 +128,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
+//        return this.roles;
     }
 
     @Override
